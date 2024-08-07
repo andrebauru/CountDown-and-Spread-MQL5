@@ -1,0 +1,71 @@
+//+------------------------------------------------------------------+
+//| Expert initialization function                                   |
+//+------------------------------------------------------------------+
+int OnInit()
+{
+    // Obtenha o nome do símbolo do gráfico
+    string chartSymbol = ChartSymbol();
+
+    // Salve o perfil (essa parte deve ser manual, não pode ser feita via MQL5 diretamente)
+    // Você pode adicionar um comentário informando ao usuário que o perfil precisa ser salvo manualmente
+
+    // Salve os objetos do gráfico
+    SaveChartObjects(chartSymbol);
+
+    return(INIT_SUCCEEDED);
+}
+
+//+------------------------------------------------------------------+
+//| Função para salvar os objetos do gráfico                          |
+//+------------------------------------------------------------------+
+void SaveChartObjects(string chartSymbol)
+{
+    // Nome do arquivo onde os objetos serão salvos
+    string filename = chartSymbol + "_objects.csv";
+    
+    // Crie ou abra o arquivo
+    int fileHandle = FileOpen(filename, FILE_WRITE | FILE_CSV);
+    if(fileHandle == INVALID_HANDLE)
+    {
+        Print("Erro ao abrir o arquivo: ", filename);
+        return;
+    }
+    
+    // Conte o número de objetos no gráfico
+    int objectCount = ObjectsTotal();
+    
+    // Escreva os dados dos objetos no arquivo
+    for(int i = 0; i < objectCount; i++)
+    {
+        string objectName = ObjectName(i);
+        int objectType = ObjectType(objectName);
+
+        // Para simplificar, vamos salvar apenas os atributos básicos dos objetos
+        double price1 = ObjectGetDouble(0, objectName, OBJPROP_PRICE1);
+        datetime time1 = (datetime)ObjectGetInteger(0, objectName, OBJPROP_TIME1);
+        
+        // Escreva os dados no arquivo CSV
+        FileWrite(fileHandle, objectName, objectType, price1, time1);
+    }
+    
+    // Feche o arquivo
+    FileClose(fileHandle);
+    
+    Print("Objetos do gráfico foram salvos em: ", filename);
+}
+
+//+------------------------------------------------------------------+
+//| Expert deinitialization function                                 |
+//+------------------------------------------------------------------+
+void OnDeinit(const int reason)
+{
+    // Adicionar código aqui se necessário ao finalizar o EA
+}
+
+//+------------------------------------------------------------------+
+//| Expert iteration function                                        |
+//+------------------------------------------------------------------+
+void OnTick()
+{
+    // Adicionar código aqui se necessário a cada tick
+}
